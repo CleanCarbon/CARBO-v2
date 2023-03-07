@@ -34,64 +34,64 @@ contract CarboTokenv2 is ERC20Burnable, AccessControl {
         _setupRole(DEFAULT_ADMIN_ROLE, owner);
         _grantRole(ADMIN, owner);
 
-        capSupply = 500_000_000 * 10 ** decimals();
+        capSupply = 500_000_000 * 10**decimals();
 
         //null address
         _mint(
             0x0000000000000000000000000000000000000001,
-            80_000_000 * 10 ** decimals()
+            80_000_000 * 10**decimals()
         );
         // future burning
         _mint(
             0x062Ede1C8613629f4dAF34CC5a9225988df95695,
-            90_000_000 * 10 ** decimals()
+            90_000_000 * 10**decimals()
         );
 
         //future public
         _mint(
             0xff6A07a7887097aaba127936329B5325a0BcE2C1,
-            50_000_000 * 10 ** decimals()
+            50_000_000 * 10**decimals()
         );
 
         // liquidity pool
         _mint(
             0x8441220eFF1370A24f1400f79C06558c3C5A48fa,
-            65_000_000 * 10 ** decimals()
+            65_000_000 * 10**decimals()
         );
 
         //airdrop
         _mint(
             0x1D2d2B2DddA02500B97f08f361AFb17751a27728,
-            35_000_000 * 10 ** decimals()
+            35_000_000 * 10**decimals()
         );
         //contests
         _mint(
             0xff48bCC891e2d2E442E2D01aFDA93161572736aF,
-            25_000_000 * 10 ** decimals()
+            25_000_000 * 10**decimals()
         );
 
         //marketing
         _mint(
             0xa48d081d79FB257eEA71791B99D535858Ad8B1DC,
-            20_000_000 * 10 ** decimals()
+            20_000_000 * 10**decimals()
         );
 
         //company reserve
         _mint(
             0xA5B10a6A78dF992Fd06587400378010BD248278b,
-            15_000_000 * 10 ** decimals()
+            15_000_000 * 10**decimals()
         );
 
         teamDev = 0x924bFf61da5B81ecCc58607e3CB76A00aa6201cf;
-        maxTokenForDev = 30_000_000 * 10 ** decimals();
-        tokenEachMonth = 1_000_000 * 10 ** decimals();
+        maxTokenForDev = 30_000_000 * 10**decimals();
+        tokenEachMonth = 1_000_000 * 10**decimals();
         latestUpdateForTeamDev = _latestUpdatedForTeamDev;
     }
 
     function releaseForAirdrop(address contractAirdrop) public onlyRole(ADMIN) {
         require(!releaseDone, "Already released");
         releaseDone = true;
-        _mint(contractAirdrop, 90_000_000 * 10 ** decimals());
+        _mint(contractAirdrop, 90_000_000 * 10**decimals());
     }
 
     function rewardForTeamDev() public {
@@ -126,14 +126,19 @@ contract CarboTokenv2 is ERC20Burnable, AccessControl {
         super._mint(account, amount);
     }
 
-    function claimFunds(address contractAddr) external onlyRole(ADMIN) {
-        // if address is contract
-        require(contractAddr.code.length > 0, "Not contract ");
-        _transfer(contractAddr, msg.sender, balanceOf(contractAddr));
-    }
-
     function changeAdminRole(address account) public onlyRole(ADMIN) {
         _grantRole(ADMIN, account);
         _revokeRole(ADMIN, msg.sender);
+    }
+
+    function emergencyWithdraw(address token)
+        public
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        // _transfer(contractAddr, msg.sender, balanceOf(contractAddr));
+        IERC20(token).transfer(
+            msg.sender,
+            IERC20(token).balanceOf(address(this))
+        );
     }
 }

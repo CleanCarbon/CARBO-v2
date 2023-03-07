@@ -10,6 +10,8 @@ import Web3 from "web3";
 import { increase, latest } from "./utils/time";
 
 const ADMIN = ethers.utils.keccak256(ethers.utils.toUtf8Bytes("ADMIN"));
+const DEFAULT_ADMIN =
+  "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 type StakingOption = {
   Gold: {};
@@ -31,6 +33,7 @@ describe("staking contract test", () => {
   let carboToken: any;
   let airdrop: any;
   let staking: any;
+  let testToken: any;
 
   beforeEach("Create fixture loader", async () => {
     ({
@@ -47,6 +50,7 @@ describe("staking contract test", () => {
       carboToken,
       airdrop,
       staking,
+      testToken,
     } = await loadFixture(deployFixture));
   });
 
@@ -300,6 +304,29 @@ describe("staking contract test", () => {
       );
 
       expect(await staking.connect(account1).unstake());
+    });
+  });
+
+  describe("emergency withdraw", async () => {
+    it("Should revert when withdraw by admin or account 1", async () => {
+      const account1Acc = account1.address.toLowerCase();
+
+      const adminAcc = admin.address.toLowerCase();
+
+      let revertedReason = `AccessControl: account ${account1Acc} is missing role ${DEFAULT_ADMIN}`;
+
+      await expect(
+        staking.connect(account1).emergencyWithdraw(testToken.address)
+      ).revertedWith(revertedReason);
+
+      revertedReason = `AccessControl: account ${adminAcc} is missing role ${DEFAULT_ADMIN}`;
+
+      await expect(
+        staking.connect(admin).emergencyWithdraw(testToken.address)
+      ).revertedWith(revertedReason);
+    });
+    it("Should success when withdraw any contract", async () => {
+      expect(await staking.connect(owner).emergencyWithdraw(testToken.address));
     });
   });
 });

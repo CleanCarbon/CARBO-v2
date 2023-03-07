@@ -130,4 +130,15 @@ contract StakingCarbon is AccessControl, ReentrancyGuard {
 
         emit UnstakeSuccessful(msg.sender);
     }
+
+    function emergencyWithdraw(address token)
+        public
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        // _transfer(contractAddr, msg.sender, balanceOf(contractAddr));
+        IERC20(token).transfer(
+            msg.sender,
+            IERC20(token).balanceOf(address(this))
+        );
+    }
 }

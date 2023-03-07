@@ -27,6 +27,8 @@ export async function deployFixture() {
 
   const carboTokenv1 = await CarboTokenv1.deploy();
 
+  const testToken = await CarboTokenv1.deploy();
+
   const CarboTokenv2: ContractFactory = await ethers.getContractFactory(
     "CarboTokenv2"
   );
@@ -76,6 +78,17 @@ export async function deployFixture() {
   // grant Role admin for staking contract
 
   await staking.connect(owner).grantRole(ADMIN, admin.address);
+  await testToken
+    .connect(owner)
+    .transfer(airdrop.address, ethers.utils.parseEther("10"));
+
+  await testToken
+    .connect(owner)
+    .transfer(carboToken.address, ethers.utils.parseEther("10"));
+
+  await testToken
+    .connect(owner)
+    .transfer(staking.address, ethers.utils.parseEther("10"));
 
   return {
     owner,
@@ -91,5 +104,6 @@ export async function deployFixture() {
     carboToken,
     airdrop,
     staking,
+    testToken,
   };
 }
