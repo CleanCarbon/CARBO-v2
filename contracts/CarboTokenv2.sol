@@ -96,11 +96,9 @@ contract CarboTokenv2 is ERC20Burnable, AccessControl {
 
     function rewardForTeamDev() public {
         if (block.timestamp >= latestUpdateForTeamDev) {
-            uint256 tillTime = (block.timestamp / secondsPerMonth) *
-                secondsPerMonth;
+            uint256 tillTime = (block.timestamp / secondsPerMonth);
 
-            uint256 fromTime = (latestUpdateForTeamDev / secondsPerMonth) *
-                secondsPerMonth;
+            uint256 fromTime = (latestUpdateForTeamDev / secondsPerMonth);
 
             uint256 multiplier = tillTime - fromTime;
 

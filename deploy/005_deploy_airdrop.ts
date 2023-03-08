@@ -13,7 +13,7 @@ const func: DeployFunction = async function (
   const args = [
     "0xc3a20F9D15cfD2224038EcCC8186C216366c4BFd",
     "0x7156412dF929c3cdB82cCbf22716F7b1c84fB31A",
-    "0xBe5b6Afeb722354deCe55E1Be47823947c8C3bbA",
+    "0xC61600a5880D146f3E825327D149cD0377a47Beb",
   ];
 
   const result = await deploy("AirdropCarbonv2", {
