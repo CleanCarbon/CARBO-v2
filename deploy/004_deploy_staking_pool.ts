@@ -10,13 +10,20 @@ const func: DeployFunction = async function (
   const { deployer } = await getNamedAccounts();
   console.log("deployer: ", deployer);
 
-  await deploy("StakingCarbon", {
+  const args = [
+    "0xc3a20F9D15cfD2224038EcCC8186C216366c4BFd",
+    "0xBe5b6Afeb722354deCe55E1Be47823947c8C3bbA",
+  ];
+
+  const result = await deploy("StakingCarbon", {
     from: deployer,
     log: true,
-    args: [
-      "0xc3a20F9D15cfD2224038EcCC8186C216366c4BFd",
-      "0xe8e2e445648564F9B57d7e4177aC327e57e3bD54",
-    ],
+    args: args,
+  });
+
+  await hre.run("verify:verify", {
+    address: result.address,
+    constructorArguments: args,
   });
 };
 
