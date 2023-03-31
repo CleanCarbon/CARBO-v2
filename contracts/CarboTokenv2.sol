@@ -2,10 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol"; 
 
 contract CarboTokenv2 is ERC20Burnable, AccessControl {
-    uint256 public capSupply;
 
     bytes32 public constant ADMIN = keccak256("ADMIN");
 
@@ -15,7 +14,6 @@ contract CarboTokenv2 is ERC20Burnable, AccessControl {
     uint256 public latestUpdateForTeamDev;
 
     uint256 public constant secondsPerMonth = 2_592_000;
-    // uint256 public constant secondsPerMonth = 3600;
 
     uint256 public maxTokenForDev;
     uint256 public tokenEachMonth;
@@ -24,17 +22,16 @@ contract CarboTokenv2 is ERC20Burnable, AccessControl {
     bool private releaseDone;
 
     event RewardForDev(uint256 timeUpdate, uint256 reward);
+    event ReleaseTokenForAirdropContract(address airdropContract, uint256 amount);
+    event ChangeAdminRole(address oldAdmin, address newAdmin);
+    event EmergencyWithdraw(address token, address adminAddress, uint256 amount);
 
     constructor(
         address owner,
-        address buybacks,
-        address treasury,
         uint256 _latestUpdatedForTeamDev
-    ) payable ERC20("CLEANCARBON", "CARBO") AccessControl() {
+    ) ERC20("CLEANCARBON", "CARBO") AccessControl() {
         _setupRole(DEFAULT_ADMIN_ROLE, owner);
         _grantRole(ADMIN, owner);
-
-        capSupply = 500_000_000 * 10 ** decimals();
 
         //null address
         _mint(
@@ -92,6 +89,8 @@ contract CarboTokenv2 is ERC20Burnable, AccessControl {
         require(!releaseDone, "Already released");
         releaseDone = true;
         _mint(contractAirdrop, 90_000_000 * 10 ** decimals());
+
+        emit ReleaseTokenForAirdropContract(contractAirdrop, 90_000_000 * 10 ** decimals());
     }
 
     function rewardForTeamDev() public {
@@ -118,25 +117,24 @@ contract CarboTokenv2 is ERC20Burnable, AccessControl {
     }
 
     function _mint(address account, uint256 amount) internal override {
-        require(
-            capSupply >= amount + totalSupply(),
-            "Token supply out of range"
-        );
         super._mint(account, amount);
     }
 
     function changeAdminRole(address account) public onlyRole(ADMIN) {
         _grantRole(ADMIN, account);
         _revokeRole(ADMIN, msg.sender);
+
+        emit ChangeAdminRole(msg.sender, account);
     }
 
     function emergencyWithdraw(
         address token
     ) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        // _transfer(contractAddr, msg.sender, balanceOf(contractAddr));
+        uint256 amount =  IERC20(token).balanceOf(address(this));
         IERC20(token).transfer(
             msg.sender,
             IERC20(token).balanceOf(address(this))
         );
+        emit EmergencyWithdraw(token, msg.sender, amount);
     }
 }

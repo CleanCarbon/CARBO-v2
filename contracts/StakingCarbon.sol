@@ -36,25 +36,47 @@ contract StakingCarbon is AccessControl, ReentrancyGuard {
     event UnstakeSuccessful(address user);
     event RestakeSuccessful(address user, uint256 timeRestake);
 
-    constructor(address owner, address _mainToken)
-        payable
-        AccessControl()
-        ReentrancyGuard()
-    {
+    event ChangeActiveStatus(uint256 stakingOptionId, bool trigger);
+    event ChangeAdminRole(address oldAdmin, address newAdmin);
+    event EmergencyWithdraw(address token, address adminAddress, uint256 amount);
+
+    constructor(
+        address owner,
+        address _mainToken
+    ) AccessControl() ReentrancyGuard() {
         _setupRole(DEFAULT_ADMIN_ROLE, owner);
         _grantRole(ADMIN, owner);
+        require(mainToken != address(0), "tokenv1 can not be zero address");
         mainToken = _mainToken;
     }
 
     function changeAdminRole(address account) public onlyRole(ADMIN) {
         _grantRole(ADMIN, account);
         _revokeRole(ADMIN, msg.sender);
+
+        emit ChangeAdminRole(msg.sender, account);
+
     }
 
-    function addStakingPayload(StakingOptions memory payload)
-        public
-        onlyRole(ADMIN)
-    {
+    function changeStageOfStakingOption(
+        uint256 _stakingOption,
+        bool _trigger
+    ) public onlyRole(ADMIN) {
+        require(
+            _stakingOption < stakingOptionsLength,
+            "Can not larger than options"
+        );
+        require(
+            _trigger != stakingOptionsStorage[_stakingOption].isActive,
+            "already trigger"
+        );
+        stakingOptionsStorage[_stakingOption].isActive = _trigger;
+        emit ChangeActiveStatus(_stakingOption, _trigger);
+    }
+
+    function addStakingPayload(
+        StakingOptions memory payload
+    ) public onlyRole(ADMIN) {
         stakingOptionsStorage[stakingOptionsLength] = StakingOptions({
             name: payload.name,
             lockDurations: payload.lockDurations,
@@ -131,14 +153,16 @@ contract StakingCarbon is AccessControl, ReentrancyGuard {
         emit UnstakeSuccessful(msg.sender);
     }
 
-    function emergencyWithdraw(address token)
-        public
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        // _transfer(contractAddr, msg.sender, balanceOf(contractAddr));
+    function emergencyWithdraw(
+        address token
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        uint256 amount =  IERC20(token).balanceOf(address(this));
+
         IERC20(token).transfer(
             msg.sender,
             IERC20(token).balanceOf(address(this))
         );
+        emit EmergencyWithdraw(token, msg.sender, amount);
+
     }
 }

@@ -14,6 +14,12 @@ contract AirdropCarbonv2 is AccessControl {
     bytes32 public constant ADMIN = keccak256("ADMIN");
 
     event AirdropSnapshotv1(address user, uint256 amount);
+    event SetCarboV1(address token);
+    event SetCarboV2(address token);
+
+    event ChangeAdminRole(address oldAdmin, address newAdmin);
+    event EmergencyWithdraw(address token, address adminAddress, uint256 amount);
+
 
     constructor(
         address owner,
@@ -23,13 +29,21 @@ contract AirdropCarbonv2 is AccessControl {
         _setupRole(DEFAULT_ADMIN_ROLE, owner);
         _grantRole(ADMIN, owner);
 
+        require(_tokenV1 != address(0), "tokenv1 can not be zero address");
+        require(_tokenV2 != address(0), "tokenv2 can not be zero address");
+
         carboV1Addr = _tokenV1;
+        emit SetCarboV1(_tokenV1);
         carboV2Addr = _tokenV2;
+        emit SetCarboV2(_tokenV2);
     }
 
     function changeAdminRole(address account) public onlyRole(ADMIN) {
         _grantRole(ADMIN, account);
         _revokeRole(ADMIN, msg.sender);
+
+        emit ChangeAdminRole(msg.sender, account);
+
     }
 
     function airdrop(uint256 amount) public {
@@ -49,10 +63,13 @@ contract AirdropCarbonv2 is AccessControl {
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        // _transfer(contractAddr, msg.sender, balanceOf(contractAddr));
+        uint256 amount =  IERC20(token).balanceOf(address(this));
+
         IERC20(token).transfer(
             msg.sender,
             IERC20(token).balanceOf(address(this))
         );
+        emit EmergencyWithdraw(token, msg.sender, amount);
+
     }
 }
