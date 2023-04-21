@@ -30,7 +30,8 @@ async function main() {
       .editStakingPayload(
         0,
         "Package Gold",
-        1000
+        1000,
+        "https://"
       )
       .encodeABI();
     var txObj = {

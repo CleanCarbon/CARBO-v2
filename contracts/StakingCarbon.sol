@@ -12,6 +12,7 @@ contract StakingCarbon is AccessControl, ReentrancyGuard {
     uint256 requiredToken;
     bool isActive;
     uint256 carbonScore;
+    string packageURL;
   }
   struct StakingOptions {
     string name;
@@ -42,9 +43,10 @@ contract StakingCarbon is AccessControl, ReentrancyGuard {
     uint256 lockDurations,
     uint256 requiredToken,
     bool isActive,
-    uint256 carbonScore
+    uint256 carbonScore,
+    string packageURL
   );
-  event EditPoolSuccessful(uint256 poolId, string name, uint256 carbonScore);
+  event EditPoolSuccessful(uint256 poolId, string name, uint256 carbonScore, string packageURL);
   event StakeSuccessful(address user, uint256 stakePackage, uint256 stakeStart);
   event UnstakeSuccessful(address user);
   event RestakeSuccessful(address user, uint256 timeRestake);
@@ -69,6 +71,7 @@ contract StakingCarbon is AccessControl, ReentrancyGuard {
 
     emit ChangeAdminRole(msg.sender, account);
   }
+  
 
   function changeStageOfStakingOption(uint256 _stakingOption, bool _trigger)
     public
@@ -103,7 +106,8 @@ contract StakingCarbon is AccessControl, ReentrancyGuard {
       payload.lockDurations,
       payload.requiredToken,
       payload.isActive,
-      payload.carbonScore
+      payload.carbonScore,
+      payload.packageURL
     );
 
     stakingOptionsLength++;
@@ -112,11 +116,12 @@ contract StakingCarbon is AccessControl, ReentrancyGuard {
   function editStakingPayload(
     uint256 _packageId,
     string memory _name,
-    uint256 _score
+    uint256 _score,
+    string memory _packageURL
   ) public onlyRole(ADMIN) {
     require(stakingOptionsStorage[_packageId].isActive, "Wrong package");
     stakingOptionsStorage[_packageId].name = _name;
-    emit EditPoolSuccessful(_packageId, _name, _score);
+    emit EditPoolSuccessful(_packageId, _name, _score, _packageURL);
   }
 
   function stake(uint256 package) public nonReentrant {
@@ -184,6 +189,7 @@ contract StakingCarbon is AccessControl, ReentrancyGuard {
     public
     onlyRole(DEFAULT_ADMIN_ROLE)
   {
+    require (token != mainToken, "Can not withdraw staking token");
     uint256 amount = IERC20(token).balanceOf(address(this));
 
     IERC20(token).transfer(msg.sender, IERC20(token).balanceOf(address(this)));

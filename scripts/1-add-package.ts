@@ -12,7 +12,7 @@ const user_pk = process.env.PK;
 
 const user = web3.eth.accounts.privateKeyToAccount(user_pk!).address;
 
-const stakingCarbon = "0x47Be3aB7e798Ce0135E99798c485178bD13f1ab4";
+const stakingCarbon = "0x00c6D086CF6439e90895BB426D96cFD62C768123";
 
 async function main() {
   const StakingCarbon = JSON.parse(
@@ -30,7 +30,9 @@ async function main() {
         lockDurations: 7200,
         requiredToken: "30000000000000000000000",
         isActive: true,
-        carbonScore: 1000
+        carbonScore: 1000,
+        packageURL: "https://google.com"
+        
     }
     var txCount = await web3.eth.getTransactionCount(user);
     var txData = contractStaking.methods
@@ -59,7 +61,8 @@ async function main() {
         lockDurations: 14400,
         requiredToken: "75000000000000000000000",
         isActive: true,
-        carbonScore: 2600
+        carbonScore: 2600,
+        packageURL: "https://google.com"
     }
     var txCount = await web3.eth.getTransactionCount(user);
     var txData = contractStaking.methods
@@ -87,7 +90,8 @@ async function main() {
         lockDurations: 100800,
         requiredToken: "200000000000000000000000",
         isActive: true,
-        carbonScore: 6700
+        carbonScore: 6700,
+        packageURL: "https://google.com"
     }
     var txCount = await web3.eth.getTransactionCount(user);
     var txData = contractStaking.methods
