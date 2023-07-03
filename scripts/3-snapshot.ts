@@ -12,7 +12,7 @@ const user_pk = process.env.PK;
 
 const user = web3.eth.accounts.privateKeyToAccount(user_pk!).address;
 
-const airdrop = "0xbB32BA0CD98BA60514527856e0EA66ad0339BD5d";
+const airdrop = "0xF88D22A44F16bF55Aa5cA9cBe844C0cb2088B9D5";
 const amount = "1000000000000000000000000"
 
 async function main() {

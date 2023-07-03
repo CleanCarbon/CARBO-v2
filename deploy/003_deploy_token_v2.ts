@@ -12,7 +12,7 @@ const func: DeployFunction = async function (
 
   const args = [
     "0xc3a20F9D15cfD2224038EcCC8186C216366c4BFd", // owner
-    "1681084800", //_latestUpdatedForTeamDev Monday, April 10, 2023 12:00:00 AM
+    "1684688400", //_latestUpdatedForTeamDev Monday, May 22, 2023 12:00:00 AM
   ];
 
   const result = await deploy("CarboTokenv2", {

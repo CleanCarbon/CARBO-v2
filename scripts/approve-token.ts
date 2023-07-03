@@ -12,8 +12,8 @@ const user_pk = process.env.PK;
 
 const user = web3.eth.accounts.privateKeyToAccount(user_pk!).address;
 
-const token = "0x16981c0E2f403F5f784D9b6238d1bFBBB1F56BA9";
-const approve_to = "0x00c6D086CF6439e90895BB426D96cFD62C768123"
+const token = "0xb728A4968d8ec19C9D6f4d7eF194F098Eeea5dDB";
+const approve_to = "0xe8F75D1e8338C48D7eE5F51A4Ef37Ca1d0544769"
 async function main() {
   const CarboTokenv2 = JSON.parse(
     fs.readFileSync(

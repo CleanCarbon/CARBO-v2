@@ -3,10 +3,11 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
 import "./v1/interfaces/ICarboToken.sol";
 
-contract AirdropCarbonv2 is AccessControl {
+contract AirdropCarbonv2 is AccessControl, Pausable {
     address public carboV1Addr;
 
     address public carboV2Addr;
@@ -18,8 +19,11 @@ contract AirdropCarbonv2 is AccessControl {
     event SetCarboV2(address token);
 
     event ChangeAdminRole(address oldAdmin, address newAdmin);
-    event EmergencyWithdraw(address token, address adminAddress, uint256 amount);
-
+    event EmergencyWithdraw(
+        address token,
+        address adminAddress,
+        uint256 amount
+    );
 
     constructor(
         address owner,
@@ -38,15 +42,24 @@ contract AirdropCarbonv2 is AccessControl {
         emit SetCarboV2(_tokenV2);
     }
 
-    function changeAdminRole(address account) public onlyRole(ADMIN) {
+    function pause() public whenNotPaused onlyRole(ADMIN) {
+        _pause();
+    }
+
+    function unpause() public whenPaused onlyRole(ADMIN) {
+        _unpause();
+    }
+
+    function changeAdminRole(
+        address account
+    ) public onlyRole(ADMIN) whenNotPaused {
         _grantRole(ADMIN, account);
         _revokeRole(ADMIN, msg.sender);
 
         emit ChangeAdminRole(msg.sender, account);
-
     }
 
-    function airdrop(uint256 amount) public {
+    function airdrop(uint256 amount) public whenNotPaused {
         require(
             IERC20(carboV2Addr).balanceOf(address(this)) >= amount,
             "Contract does not have enough token for this airdrop, contact admin"
@@ -59,17 +72,15 @@ contract AirdropCarbonv2 is AccessControl {
         emit AirdropSnapshotv1(msg.sender, amount);
     }
 
-    function emergencyWithdraw(address token)
-        public
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        uint256 amount =  IERC20(token).balanceOf(address(this));
+    function emergencyWithdraw(
+        address token
+    ) public onlyRole(DEFAULT_ADMIN_ROLE) whenPaused {
+        uint256 amount = IERC20(token).balanceOf(address(this));
 
         IERC20(token).transfer(
             msg.sender,
             IERC20(token).balanceOf(address(this))
         );
         emit EmergencyWithdraw(token, msg.sender, amount);
-
     }
 }

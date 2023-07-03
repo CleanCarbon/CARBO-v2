@@ -12,7 +12,7 @@ const user_pk = process.env.PK;
 
 const user = web3.eth.accounts.privateKeyToAccount(user_pk!).address;
 
-const stakingCarbon = "0x00c6D086CF6439e90895BB426D96cFD62C768123";
+const stakingCarbon = "0xe8F75D1e8338C48D7eE5F51A4Ef37Ca1d0544769";
 
 async function main() {
   const StakingCarbon = JSON.parse(

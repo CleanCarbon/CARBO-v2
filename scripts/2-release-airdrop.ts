@@ -12,8 +12,8 @@ const user_pk = process.env.PK;
 
 const user = web3.eth.accounts.privateKeyToAccount(user_pk!).address;
 
-const token = "0x16981c0E2f403F5f784D9b6238d1bFBBB1F56BA9";
-const airdrop = "0xbB32BA0CD98BA60514527856e0EA66ad0339BD5d"
+const token = "0x6fF9703020e21F257Cd6f8fea4CDB1D2256d91A4";
+const airdrop = "0xa966123617049bfe784D0F55894cC021c219E870"
 async function main() {
   const CarboTokenv2 = JSON.parse(
     fs.readFileSync(
