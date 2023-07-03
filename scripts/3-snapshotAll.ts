@@ -12,31 +12,26 @@ const user_pk = process.env.PK;
 
 const user = web3.eth.accounts.privateKeyToAccount(user_pk!).address;
 
-const token = "0x21c2718a8e44c2ca224eec38124e3eb307c27bfa";
-const approve_to = "0x383A03e0592b7dA73B44F5c898b24176980E372d"
+const airdrop = "0x383A03e0592b7dA73B44F5c898b24176980E372d";
+const amount = "1000000000000000000000000";
+
 async function main() {
-  const CarboTokenv2 = JSON.parse(
+  const AirdropCarbonv2 = JSON.parse(
     fs.readFileSync(
-      "./artifacts/contracts/CarboTokenv2.sol/CarboTokenv2.json",
+      "./artifacts/contracts/AirdropCarbonv2.sol/AirdropCarbonv2.json",
       "utf-8"
     )
   ).abi;
-  const contractToken = new web3.eth.Contract(CarboTokenv2, token);
+  const contractStaking = new web3.eth.Contract(AirdropCarbonv2, airdrop);
 
   {
-    
     var txCount = await web3.eth.getTransactionCount(user);
-    var txData = contractToken.methods
-      .approve(
-        approve_to,
-        "10000000000100000000001000000000010000000000"
-      )
-      .encodeABI();
+    var txData = contractStaking.methods.airdropAll().encodeABI();
     var txObj = {
       nonce: txCount,
       gasLimit: web3.utils.toHex(1000000),
       data: txData,
-      to: token,
+      to: airdrop,
       from: user,
     };
 
@@ -44,7 +39,6 @@ async function main() {
     var result = await web3.eth.sendSignedTransaction(signedTx.rawTransaction!);
     console.log(result);
   }
-
 }
 
 // We recommend this pattern to be able to use async/await everywhere

@@ -1,7 +1,7 @@
 {
     "testnet": {
-        "CarboTokenv2": "0x16981c0E2f403F5f784D9b6238d1bFBBB1F56BA9",
-        "StakingCarbon": "0x00c6D086CF6439e90895BB426D96cFD62C768123",
-        "AirdropCarbonv2": "0xbB32BA0CD98BA60514527856e0EA66ad0339BD5d"
+        "CarboTokenv2": "0x81E57bB55d1D3fddA950A69c161270eb6c27C362",
+        "StakingCarbon": "0xC90d08e83fd42048eFE0D3eb88a1893C5C83e8cD",
+        "AirdropCarbonv2": "0x383A03e0592b7dA73B44F5c898b24176980E372d"
     }
 }

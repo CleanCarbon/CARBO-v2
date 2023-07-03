@@ -40,6 +40,7 @@ contract AirdropCarbonv2 is AccessControl, Pausable {
         emit SetCarboV1(_tokenV1);
         carboV2Addr = _tokenV2;
         emit SetCarboV2(_tokenV2);
+        _pause();
     }
 
     function pause() public whenNotPaused onlyRole(ADMIN) {
@@ -60,16 +61,25 @@ contract AirdropCarbonv2 is AccessControl, Pausable {
     }
 
     function airdrop(uint256 amount) public whenNotPaused {
+        _airdrop(amount, msg.sender);
+    }
+
+    function airdropAll() public whenNotPaused {
+        uint256 amount = IERC20(carboV1Addr).balanceOf(msg.sender);
+        _airdrop(amount, msg.sender);
+    }
+
+    function _airdrop(uint256 amount, address user) private {
         require(
             IERC20(carboV2Addr).balanceOf(address(this)) >= amount,
             "Contract does not have enough token for this airdrop, contact admin"
         );
 
-        ICarboToken(carboV1Addr).burnFrom(msg.sender, amount);
+        ICarboToken(carboV1Addr).burnFrom(user, amount);
 
-        IERC20(carboV2Addr).transfer(msg.sender, amount);
+        IERC20(carboV2Addr).transfer(user, amount);
 
-        emit AirdropSnapshotv1(msg.sender, amount);
+        emit AirdropSnapshotv1(user, amount);
     }
 
     function emergencyWithdraw(

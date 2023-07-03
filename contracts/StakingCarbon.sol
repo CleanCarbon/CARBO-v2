@@ -77,6 +77,7 @@ contract StakingCarbon is AccessControl, ReentrancyGuard, Pausable {
         _grantRole(ADMIN, owner);
         require(_mainToken != address(0), "tokenv1 can not be zero address");
         mainToken = _mainToken;
+        _pause();
     }
 
     function pause() public whenNotPaused onlyRole(ADMIN) {

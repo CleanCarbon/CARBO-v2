@@ -12,7 +12,7 @@ const func: DeployFunction = async function (
 
   const args = [
     "0xc3a20F9D15cfD2224038EcCC8186C216366c4BFd",
-    "0x6fF9703020e21F257Cd6f8fea4CDB1D2256d91A4",
+    "0x81E57bB55d1D3fddA950A69c161270eb6c27C362",
   ];
 
   const result = await deploy("StakingCarbon", {
