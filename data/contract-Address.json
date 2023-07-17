@@ -3,5 +3,10 @@
         "CarboTokenv2": "0x81E57bB55d1D3fddA950A69c161270eb6c27C362",
         "StakingCarbon": "0xC90d08e83fd42048eFE0D3eb88a1893C5C83e8cD",
         "AirdropCarbonv2": "0x383A03e0592b7dA73B44F5c898b24176980E372d"
+    },
+    "bscmainnet":{
+        "CarboTokenv2": "0x91D1b8169bE718AC899d1A856C75819F5f62E991",
+        "StakingCarbon": "0x06e1dF8FEF49B2749F63D33157fac53A79e4261F",
+        "AirdropCarbonv2": "0xF1c6f4ef06bc1C2cD6B2517DE5F26C1a4EaD614B"
     }
 }

@@ -12,30 +12,38 @@ const user_pk = process.env.PK;
 
 const user = web3.eth.accounts.privateKeyToAccount(user_pk!).address;
 
-const token = "0x91D1b8169bE718AC899d1A856C75819F5f62E991";
-const airdrop = "0xF1c6f4ef06bc1C2cD6B2517DE5F26C1a4EaD614B"
+const stakingCarbon = "0x06e1dF8FEF49B2749F63D33157fac53A79e4261F";
+const owner = "0xF78c6d6621cCA0E4f208e17f800495B2e399Ab1E";
+
 async function main() {
-  const CarboTokenv2 = JSON.parse(
+  const StakingCarbon = JSON.parse(
     fs.readFileSync(
-      "./artifacts/contracts/CarboTokenv2.sol/CarboTokenv2.json",
+      "./artifacts/contracts/StakingCarbon.sol/StakingCarbon.json",
       "utf-8"
     )
   ).abi;
-  const contractToken = new web3.eth.Contract(CarboTokenv2, token);
+  const contractStaking = new web3.eth.Contract(StakingCarbon, stakingCarbon);
 
   {
-    
     var txCount = await web3.eth.getTransactionCount(user);
-    var txData = contractToken.methods
-      .releaseForAirdrop(
-        airdrop
+    var txData = contractStaking.methods
+      .revokeRole(
+        "0x0000000000000000000000000000000000000000000000000000000000000000",
+        owner
       )
       .encodeABI();
+
+    // var txData = contractStaking.methods
+    //   .revokeRole(
+    //     "0xdf8b4c520ffe197c5343c6f5aec59570151ef9a492f2c624fd45ddde6135ec42",
+    //     owner
+    //   )
+    //   .encodeABI();
     var txObj = {
       nonce: txCount,
-      gasLimit: web3.utils.toHex(1000000),
+      gasLimit: web3.utils.toHex(50000),
       data: txData,
-      to: token,
+      to: stakingCarbon,
       from: user,
     };
 
@@ -43,7 +51,6 @@ async function main() {
     var result = await web3.eth.sendSignedTransaction(signedTx.rawTransaction!);
     console.log(result);
   }
-
 }
 
 // We recommend this pattern to be able to use async/await everywhere
