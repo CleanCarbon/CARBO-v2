@@ -13,7 +13,7 @@ contract CarboTokenv2 is ERC20Burnable, AccessControl {
     address public teamDev;
     uint256 public latestUpdateForTeamDev;
 
-    uint256 public constant secondsPerMonth = 259_200;
+    uint256 public constant secondsPerMonth = 2_592_000;
 
     uint256 public maxTokenForDev;
     uint256 public tokenEachMonth;
