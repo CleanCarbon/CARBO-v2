@@ -9,8 +9,6 @@ contract CarboTokenv2 is ERC20Burnable, AccessControl {
     using SafeERC20 for IERC20;
     bytes32 public constant ADMIN = keccak256("ADMIN");
 
-    bytes32 public constant CONTRACT_MANAGER = keccak256("CONTRACT_MANAGER");
-
     address public teamDev;
     uint256 public latestUpdateForTeamDev;
 
