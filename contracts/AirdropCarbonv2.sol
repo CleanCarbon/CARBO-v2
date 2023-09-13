@@ -4,10 +4,12 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import "./v1/interfaces/ICarboToken.sol";
 
 contract AirdropCarbonv2 is AccessControl, Pausable {
+    using SafeERC20 for IERC20;
     address public carboV1Addr;
 
     address public carboV2Addr;
@@ -25,11 +27,7 @@ contract AirdropCarbonv2 is AccessControl, Pausable {
         uint256 amount
     );
 
-    constructor(
-        address owner,
-        address _tokenV1,
-        address _tokenV2
-    )  {
+    constructor(address owner, address _tokenV1, address _tokenV2) {
         _setupRole(DEFAULT_ADMIN_ROLE, owner);
         _grantRole(ADMIN, owner);
 
@@ -77,7 +75,7 @@ contract AirdropCarbonv2 is AccessControl, Pausable {
 
         ICarboToken(carboV1Addr).burnFrom(user, amount);
 
-        IERC20(carboV2Addr).transfer(user, amount);
+        IERC20(carboV2Addr).safeTransfer(user, amount);
 
         emit AirdropSnapshotv1(user, amount);
     }
@@ -87,7 +85,7 @@ contract AirdropCarbonv2 is AccessControl, Pausable {
     ) public onlyRole(DEFAULT_ADMIN_ROLE) whenPaused {
         uint256 amount = IERC20(token).balanceOf(address(this));
 
-        IERC20(token).transfer(
+        IERC20(token).safeTransfer(
             msg.sender,
             IERC20(token).balanceOf(address(this))
         );

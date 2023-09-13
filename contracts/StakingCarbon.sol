@@ -5,8 +5,10 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract StakingCarbon is AccessControl, ReentrancyGuard, Pausable {
+    using SafeERC20 for IERC20;
     struct StakingOptionsPayload {
         string name;
         uint256 lockDurations;
@@ -152,7 +154,7 @@ contract StakingCarbon is AccessControl, ReentrancyGuard, Pausable {
             "User already stake in pool"
         );
 
-        IERC20(mainToken).transferFrom(
+        IERC20(mainToken).safeTransferFrom(
             msg.sender,
             address(this),
             stakingOptionsStorage[package].requiredToken
@@ -198,7 +200,7 @@ contract StakingCarbon is AccessControl, ReentrancyGuard, Pausable {
             "user did not stake yet or still in lock duration"
         );
 
-        IERC20(mainToken).transfer(
+        IERC20(mainToken).safeTransfer(
             msg.sender,
             stakingOptionsStorage[userInfo.package].requiredToken
         );
@@ -214,7 +216,7 @@ contract StakingCarbon is AccessControl, ReentrancyGuard, Pausable {
         require(token != mainToken, "Can not withdraw staking token");
         uint256 amount = IERC20(token).balanceOf(address(this));
 
-        IERC20(token).transfer(
+        IERC20(token).safeTransfer(
             msg.sender,
             IERC20(token).balanceOf(address(this))
         );

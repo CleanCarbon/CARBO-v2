@@ -3,8 +3,10 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract CarboTokenv2 is ERC20Burnable, AccessControl {
+    using SafeERC20 for IERC20;
     bytes32 public constant ADMIN = keccak256("ADMIN");
 
     bytes32 public constant CONTRACT_MANAGER = keccak256("CONTRACT_MANAGER");
@@ -144,7 +146,7 @@ contract CarboTokenv2 is ERC20Burnable, AccessControl {
         address token
     ) public onlyRole(DEFAULT_ADMIN_ROLE) {
         uint256 amount = IERC20(token).balanceOf(address(this));
-        IERC20(token).transfer(
+        IERC20(token).safeTransfer(
             msg.sender,
             IERC20(token).balanceOf(address(this))
         );
