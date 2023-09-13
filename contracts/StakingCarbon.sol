@@ -69,10 +69,7 @@ contract StakingCarbon is AccessControl, ReentrancyGuard, Pausable {
         uint256 amount
     );
 
-    constructor(
-        address owner,
-        address _mainToken
-    ) AccessControl() ReentrancyGuard() {
+    constructor(address owner, address _mainToken) {
         _setupRole(DEFAULT_ADMIN_ROLE, owner);
         _grantRole(ADMIN, owner);
         require(_mainToken != address(0), "tokenv1 can not be zero address");

@@ -29,7 +29,7 @@ contract AirdropCarbonv2 is AccessControl, Pausable {
         address owner,
         address _tokenV1,
         address _tokenV2
-    ) AccessControl() {
+    )  {
         _setupRole(DEFAULT_ADMIN_ROLE, owner);
         _grantRole(ADMIN, owner);
 

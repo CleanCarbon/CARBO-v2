@@ -35,7 +35,7 @@ contract CarboTokenv2 is ERC20Burnable, AccessControl {
     constructor(
         address owner,
         uint256 _latestUpdatedForTeamDev
-    ) ERC20("CLEANCARBON", "CARBO") AccessControl() {
+    ) ERC20("CLEANCARBON", "CARBO")  {
         require(
             _latestUpdatedForTeamDev % secondsPerMonth == 0,
             "not a multiple of secondsPerMonth"
