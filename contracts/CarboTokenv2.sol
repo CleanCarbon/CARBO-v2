@@ -2,10 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol"; 
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract CarboTokenv2 is ERC20Burnable, AccessControl {
-
     bytes32 public constant ADMIN = keccak256("ADMIN");
 
     bytes32 public constant CONTRACT_MANAGER = keccak256("CONTRACT_MANAGER");
@@ -22,14 +21,25 @@ contract CarboTokenv2 is ERC20Burnable, AccessControl {
     bool private releaseDone;
 
     event RewardForDev(uint256 timeUpdate, uint256 reward);
-    event ReleaseTokenForAirdropContract(address airdropContract, uint256 amount);
+    event ReleaseTokenForAirdropContract(
+        address airdropContract,
+        uint256 amount
+    );
     event ChangeAdminRole(address oldAdmin, address newAdmin);
-    event EmergencyWithdraw(address token, address adminAddress, uint256 amount);
+    event EmergencyWithdraw(
+        address token,
+        address adminAddress,
+        uint256 amount
+    );
 
     constructor(
         address owner,
         uint256 _latestUpdatedForTeamDev
     ) ERC20("CLEANCARBON", "CARBO") AccessControl() {
+        require(
+            _latestUpdatedForTeamDev % secondsPerMonth == 0,
+            "not a multiple of secondsPerMonth"
+        );
         _setupRole(DEFAULT_ADMIN_ROLE, owner);
         _grantRole(ADMIN, owner);
 
@@ -90,7 +100,10 @@ contract CarboTokenv2 is ERC20Burnable, AccessControl {
         releaseDone = true;
         _mint(contractAirdrop, 90_000_000 * 10 ** decimals());
 
-        emit ReleaseTokenForAirdropContract(contractAirdrop, 90_000_000 * 10 ** decimals());
+        emit ReleaseTokenForAirdropContract(
+            contractAirdrop,
+            90_000_000 * 10 ** decimals()
+        );
     }
 
     function rewardForTeamDev() public {
@@ -130,7 +143,7 @@ contract CarboTokenv2 is ERC20Burnable, AccessControl {
     function emergencyWithdraw(
         address token
     ) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        uint256 amount =  IERC20(token).balanceOf(address(this));
+        uint256 amount = IERC20(token).balanceOf(address(this));
         IERC20(token).transfer(
             msg.sender,
             IERC20(token).balanceOf(address(this))
